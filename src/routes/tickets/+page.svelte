@@ -117,67 +117,134 @@
 </div>
 
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+	:global(body) {
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	}
+
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 2rem 1rem;
+		padding: 3rem 1.5rem;
+		position: relative;
+		z-index: 1;
 	}
 
 	header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 2rem;
+		margin-bottom: 3rem;
 		flex-wrap: wrap;
-		gap: 1rem;
+		gap: 1.5rem;
+		animation: fadeInDown 0.8s ease;
+	}
+
+	@keyframes fadeInDown {
+		from {
+			opacity: 0;
+			transform: translateY(-30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	header h1 {
 		margin: 0;
-		color: #2c3e50;
+		font-size: 3rem;
+		font-weight: 800;
+		background: linear-gradient(135deg, #3cba92 0%, #0ba360 50%, #ffffff 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		filter: drop-shadow(0 4px 12px rgba(60, 186, 146, 0.4));
+		letter-spacing: -0.02em;
 	}
 
 	.btn-primary {
 		display: inline-block;
-		padding: 0.75rem 1.5rem;
-		background: #3498db;
+		padding: 0.875rem 1.75rem;
+		background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
 		color: white;
 		text-decoration: none;
-		border-radius: 6px;
-		font-weight: 600;
-		transition: background 0.2s;
+		border-radius: 14px;
+		font-weight: 700;
+		transition: all 0.3s ease;
+		box-shadow:
+			0 6px 20px rgba(11, 163, 96, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+		letter-spacing: 0.01em;
 	}
 
 	.btn-primary:hover {
-		background: #2980b9;
+		transform: translateY(-2px);
+		box-shadow:
+			0 8px 28px rgba(11, 163, 96, 0.5),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3);
 	}
 
 	.filters {
 		display: flex;
-		gap: 1rem;
-		margin-bottom: 2rem;
+		gap: 1.5rem;
+		margin-bottom: 3rem;
 		flex-wrap: wrap;
+		animation: fadeInUp 0.8s ease 0.2s both;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.filter-group {
 		flex: 1;
-		min-width: 200px;
+		min-width: 240px;
 	}
 
 	.filter-group label {
 		display: block;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
 		font-weight: 600;
-		color: #2c3e50;
+		color: rgba(255, 255, 255, 0.95);
+		font-size: 0.95rem;
+		letter-spacing: 0.01em;
 	}
 
 	.filter-group select {
 		width: 100%;
-		padding: 0.75rem;
-		border: 2px solid #ddd;
-		border-radius: 6px;
+		padding: 1rem 1.25rem;
+		background: rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 2px solid rgba(255, 255, 255, 0.2);
+		border-radius: 12px;
 		font-size: 1rem;
-		background: white;
+		font-family: inherit;
+		color: white;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.3s ease;
+	}
+
+	.filter-group select option {
+		background: #203a43;
+		color: white;
+	}
+
+	.filter-group select:focus {
+		outline: none;
+		border-color: rgba(60, 186, 146, 0.5);
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 0 0 4px rgba(60, 186, 146, 0.15);
 	}
 
 	.loading,
@@ -213,23 +280,51 @@
 	.tickets-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-		gap: 1.5rem;
+		gap: 2rem;
+		animation: fadeInUp 0.8s ease 0.3s both;
 	}
 
 	.ticket-card {
-		background: white;
-		border-radius: 12px;
-		padding: 1.5rem;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		background: rgba(255, 255, 255, 0.08);
+		backdrop-filter: blur(30px) saturate(180%);
+		-webkit-backdrop-filter: blur(30px) saturate(180%);
+		border-radius: 24px;
+		padding: 2rem;
+		box-shadow:
+			0 8px 32px rgba(0, 0, 0, 0.25),
+			0 16px 64px rgba(11, 163, 96, 0.1),
+			inset 0 1px 0 rgba(255, 255, 255, 0.25);
+		border: 1.5px solid rgba(60, 186, 146, 0.25);
 		text-decoration: none;
 		color: inherit;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 		display: block;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.ticket-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(60, 186, 146, 0.08), transparent);
+		transition: left 0.6s ease;
+	}
+
+	.ticket-card:hover::before {
+		left: 100%;
 	}
 
 	.ticket-card:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+		transform: translateY(-8px) scale(1.02);
+		box-shadow:
+			0 12px 48px rgba(0, 0, 0, 0.3),
+			0 20px 80px rgba(11, 163, 96, 0.2),
+			inset 0 1px 0 rgba(255, 255, 255, 0.35);
+		border-color: rgba(60, 186, 146, 0.5);
 	}
 
 	.ticket-header {
@@ -242,68 +337,81 @@
 	.ticket-numero {
 		font-family: 'Courier New', monospace;
 		font-weight: bold;
-		color: #7f8c8d;
-		font-size: 0.9rem;
+		color: rgba(60, 186, 146, 0.9);
+		font-size: 0.95rem;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 
 	.badge {
-		padding: 0.25rem 0.75rem;
-		border-radius: 12px;
+		padding: 0.35rem 0.9rem;
+		border-radius: 14px;
 		font-size: 0.8rem;
-		font-weight: 600;
+		font-weight: 700;
 		color: white;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
 	:global(.bg-blue-500) {
-		background: #3498db;
+		background: linear-gradient(135deg, #3498db, #2980b9);
 	}
 	:global(.bg-yellow-500) {
-		background: #f39c12;
+		background: linear-gradient(135deg, #f39c12, #e67e22);
 	}
 	:global(.bg-green-500) {
-		background: #27ae60;
+		background: linear-gradient(135deg, #0ba360, #3cba92);
 	}
 	:global(.bg-gray-500) {
-		background: #95a5a6;
+		background: linear-gradient(135deg, #95a5a6, #7f8c8d);
 	}
 
 	.ticket-titulo {
-		margin: 0 0 0.75rem 0;
-		color: #2c3e50;
-		font-size: 1.1rem;
+		margin: 0 0 1rem 0;
+		color: white;
+		font-size: 1.25rem;
 		line-height: 1.4;
+		font-weight: 700;
+		letter-spacing: -0.01em;
 	}
 
 	.ticket-descripcion {
-		color: #7f8c8d;
-		line-height: 1.5;
-		margin: 0 0 1rem 0;
+		color: rgba(255, 255, 255, 0.8);
+		line-height: 1.6;
+		margin: 0 0 1.25rem 0;
 		font-size: 0.95rem;
+		font-weight: 400;
 	}
 
 	.ticket-footer {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-top: 1rem;
-		border-top: 1px solid #ecf0f1;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgba(60, 186, 146, 0.2);
 	}
 
 	.categoria-badge {
 		font-size: 0.85rem;
-		color: #3498db;
-		font-weight: 500;
+		color: rgba(60, 186, 146, 1);
+		font-weight: 600;
+		background: rgba(60, 186, 146, 0.15);
+		padding: 0.35rem 0.75rem;
+		border-radius: 10px;
+		border: 1px solid rgba(60, 186, 146, 0.3);
 	}
 
 	.comentarios-count {
 		font-size: 0.9rem;
-		color: #7f8c8d;
+		color: rgba(255, 255, 255, 0.7);
+		font-weight: 500;
 	}
 
 	.ticket-date {
-		margin-top: 0.75rem;
+		margin-top: 1rem;
 		font-size: 0.8rem;
-		color: #95a5a6;
+		color: rgba(255, 255, 255, 0.5);
+		font-weight: 400;
 	}
 
 	@media (max-width: 768px) {

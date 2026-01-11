@@ -177,11 +177,12 @@
 		margin: 0;
 		padding: 0;
 		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+		background: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #0ba360 75%, #3cba92 100%);
 		background-size: 400% 400%;
-		animation: gradientShift 15s ease infinite;
+		animation: gradientShift 20s ease infinite;
 		min-height: 100vh;
 		position: relative;
+		overflow-x: hidden;
 	}
 
 	:global(body::before) {
@@ -192,17 +193,48 @@
 		right: 0;
 		bottom: 0;
 		background:
-			radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
-			radial-gradient(circle at 80% 80%, rgba(72, 219, 251, 0.3), transparent 50%),
-			radial-gradient(circle at 40% 20%, rgba(99, 179, 237, 0.2), transparent 50%);
+			radial-gradient(circle at 20% 30%, rgba(11, 163, 96, 0.4), transparent 40%),
+			radial-gradient(circle at 80% 70%, rgba(60, 186, 146, 0.35), transparent 45%),
+			radial-gradient(circle at 50% 50%, rgba(32, 58, 67, 0.3), transparent 50%),
+			radial-gradient(circle at 10% 80%, rgba(15, 32, 39, 0.25), transparent 35%);
 		pointer-events: none;
 		z-index: 0;
+		animation: floatBubbles 25s ease-in-out infinite;
+	}
+
+	:global(body::after) {
+		content: '';
+		position: fixed;
+		top: -50%;
+		left: -50%;
+		width: 200%;
+		height: 200%;
+		background:
+			repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(11, 163, 96, 0.03) 2px, rgba(11, 163, 96, 0.03) 4px),
+			repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(60, 186, 146, 0.03) 2px, rgba(60, 186, 146, 0.03) 4px);
+		pointer-events: none;
+		z-index: 0;
+		animation: gridMove 40s linear infinite;
 	}
 
 	@keyframes gradientShift {
 		0% { background-position: 0% 50%; }
+		25% { background-position: 50% 75%; }
 		50% { background-position: 100% 50%; }
+		75% { background-position: 50% 25%; }
 		100% { background-position: 0% 50%; }
+	}
+
+	@keyframes floatBubbles {
+		0%, 100% { transform: translate(0, 0) scale(1); }
+		25% { transform: translate(-20px, -20px) scale(1.05); }
+		50% { transform: translate(20px, 20px) scale(0.95); }
+		75% { transform: translate(-15px, 15px) scale(1.02); }
+	}
+
+	@keyframes gridMove {
+		0% { transform: translate(0, 0); }
+		100% { transform: translate(50px, 50px); }
 	}
 
 	.container {
@@ -234,11 +266,11 @@
 		font-size: 3.5rem;
 		font-weight: 800;
 		margin: 0 0 0.75rem 0;
-		background: linear-gradient(135deg, #ffffff 0%, #e0f7ff 100%);
+		background: linear-gradient(135deg, #3cba92 0%, #0ba360 50%, #ffffff 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
-		text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		filter: drop-shadow(0 4px 12px rgba(60, 186, 146, 0.4));
 		letter-spacing: -0.02em;
 	}
 
@@ -272,16 +304,36 @@
 	}
 
 	.form-card {
-		background: rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
-		border-radius: 24px;
+		background: rgba(255, 255, 255, 0.08);
+		backdrop-filter: blur(30px) saturate(180%);
+		-webkit-backdrop-filter: blur(30px) saturate(180%);
+		border-radius: 32px;
 		padding: 3rem;
 		box-shadow:
-			0 8px 32px rgba(0, 0, 0, 0.1),
-			inset 0 1px 0 rgba(255, 255, 255, 0.3);
-		border: 1px solid rgba(255, 255, 255, 0.2);
+			0 8px 32px rgba(0, 0, 0, 0.25),
+			0 16px 64px rgba(11, 163, 96, 0.15),
+			inset 0 1px 0 rgba(255, 255, 255, 0.25),
+			inset 0 -1px 0 rgba(11, 163, 96, 0.2);
+		border: 1.5px solid rgba(60, 186, 146, 0.3);
 		animation: fadeInUp 0.8s ease;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.form-card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(60, 186, 146, 0.1), transparent);
+		animation: shimmer 3s infinite;
+	}
+
+	@keyframes shimmer {
+		0% { left: -100%; }
+		100% { left: 100%; }
 	}
 
 	@keyframes fadeInUp {
@@ -430,23 +482,48 @@
 	.btn-primary {
 		width: 100%;
 		padding: 1.25rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: linear-gradient(135deg, #0ba360 0%, #3cba92 50%, #0ba360 100%);
+		background-size: 200% 200%;
 		color: white;
 		border: none;
-		border-radius: 14px;
+		border-radius: 16px;
 		font-size: 1.1rem;
 		font-weight: 700;
 		cursor: pointer;
 		transition: all 0.3s ease;
-		box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+		box-shadow:
+			0 8px 24px rgba(11, 163, 96, 0.5),
+			0 4px 12px rgba(60, 186, 146, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
 		letter-spacing: 0.02em;
 		text-transform: uppercase;
 		font-size: 0.95rem;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.btn-primary::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		transition: left 0.5s ease;
+	}
+
+	.btn-primary:hover:not(:disabled)::before {
+		left: 100%;
 	}
 
 	.btn-primary:hover:not(:disabled) {
-		transform: translateY(-2px);
-		box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+		transform: translateY(-3px);
+		box-shadow:
+			0 12px 36px rgba(11, 163, 96, 0.6),
+			0 6px 18px rgba(60, 186, 146, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3);
+		background-position: 100% 50%;
 	}
 
 	.btn-primary:active:not(:disabled) {
