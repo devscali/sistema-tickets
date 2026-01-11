@@ -199,7 +199,7 @@
 		margin: 0;
 		padding: 0;
 		font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 15%, #f093fb 30%, #4facfe 45%, #00f2fe 60%, #43e97b 75%, #38f9d7 90%, #ff6b9d 100%);
+		background: linear-gradient(135deg, #1a1a2e 0%, #16213e 15%, #0f3460 30%, #533483 45%, #2d4263 60%, #1e3a5f 75%, #192a3e 90%, #2c3e50 100%);
 		background-size: 400% 400%;
 		animation: gradientShift 25s ease infinite;
 		min-height: 100vh;
@@ -215,11 +215,11 @@
 		right: 0;
 		bottom: 0;
 		background:
-			radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.5), transparent 35%),
-			radial-gradient(circle at 80% 70%, rgba(255, 107, 157, 0.4), transparent 40%),
-			radial-gradient(circle at 50% 50%, rgba(67, 233, 123, 0.45), transparent 45%),
-			radial-gradient(circle at 10% 80%, rgba(240, 147, 251, 0.35), transparent 38%),
-			radial-gradient(circle at 90% 20%, rgba(56, 249, 215, 0.4), transparent 42%);
+			radial-gradient(circle at 20% 30%, rgba(83, 52, 131, 0.4), transparent 35%),
+			radial-gradient(circle at 80% 70%, rgba(15, 52, 96, 0.35), transparent 40%),
+			radial-gradient(circle at 50% 50%, rgba(67, 233, 123, 0.25), transparent 45%),
+			radial-gradient(circle at 10% 80%, rgba(102, 126, 234, 0.3), transparent 38%),
+			radial-gradient(circle at 90% 20%, rgba(56, 249, 215, 0.25), transparent 42%);
 		pointer-events: none;
 		z-index: 0;
 		animation: floatBubbles 30s ease-in-out infinite;
