@@ -70,6 +70,7 @@ export async function obtenerTicketPorNumero(numero: number): Promise<Ticket | n
 export async function crearTicket(
 	titulo: string,
 	descripcion: string,
+	nombrePaciente: string,
 	categoria: Categoria,
 	capturaFile: File
 ): Promise<Ticket> {
@@ -82,6 +83,7 @@ export async function crearTicket(
 		.insert({
 			titulo,
 			descripcion,
+			nombre_paciente: nombrePaciente,
 			categoria,
 			captura_url: capturaUrl
 		})

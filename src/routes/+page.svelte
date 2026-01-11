@@ -5,7 +5,8 @@
 
 	let titulo = '';
 	let descripcion = '';
-	let categoria: Categoria = 'Problema Técnico';
+	let nombrePaciente = '';
+	let categoria: Categoria = 'WhatsApp';
 	let capturaFile: File | null = null;
 	let capturaPreview: string | null = null;
 
@@ -44,13 +45,18 @@
 		error = '';
 
 		// Validaciones
+		if (nombrePaciente.length < 2) {
+			error = 'El nombre del paciente debe tener al menos 2 caracteres';
+			return;
+		}
+
 		if (titulo.length < 15) {
 			error = 'El título debe tener al menos 15 caracteres';
 			return;
 		}
 
-		if (descripcion.length < 100) {
-			error = 'La descripción debe tener al menos 100 caracteres';
+		if (descripcion.length < 50) {
+			error = 'La descripción debe tener al menos 50 caracteres';
 			return;
 		}
 
@@ -63,7 +69,7 @@
 			cargando = true;
 
 			// Crear ticket
-			const nuevoTicket = await crearTicket(titulo, descripcion, categoria, capturaFile);
+			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile);
 
 			// Redirigir a la página del ticket
 			goto(`/ticket/${nuevoTicket.numero}`);
@@ -77,8 +83,8 @@
 
 <div class="container">
 	<header>
-		<h1>🎫 Sistema de Tickets</h1>
-		<p>Reporta incidencias de forma clara y estructurada</p>
+		<h1>🤖 CRM Bot Médico</h1>
+		<p>Reporta problemas con mensajes, bot o sistema</p>
 		<a href="/tickets" class="btn-secondary">Ver todos los tickets →</a>
 	</header>
 
@@ -87,10 +93,26 @@
 			<h2>Crear Nuevo Ticket</h2>
 
 			<form on:submit|preventDefault={enviarFormulario}>
+				<!-- Nombre del Paciente -->
+				<div class="form-group">
+					<label for="nombrePaciente">
+						Nombre del Paciente <span class="required">*</span>
+					</label>
+					<input
+						id="nombrePaciente"
+						type="text"
+						bind:value={nombrePaciente}
+						placeholder="Ej: Juan Pérez"
+						required
+						minlength="2"
+					/>
+					<span class="char-count">{nombrePaciente.length}/2</span>
+				</div>
+
 				<!-- Categoría -->
 				<div class="form-group">
 					<label for="categoria">
-						Categoría <span class="required">*</span>
+						Canal / Tipo de Problema <span class="required">*</span>
 					</label>
 					<select id="categoria" bind:value={categoria} required>
 						{#each CATEGORIAS as cat}
@@ -102,14 +124,14 @@
 				<!-- Título -->
 				<div class="form-group">
 					<label for="titulo">
-						Título <span class="required">*</span>
+						Resumen del Problema <span class="required">*</span>
 						<span class="hint">(mínimo 15 caracteres)</span>
 					</label>
 					<input
 						id="titulo"
 						type="text"
 						bind:value={titulo}
-						placeholder="Describe brevemente el problema..."
+						placeholder="Ej: No llegó mensaje de confirmación de cita"
 						required
 						minlength="15"
 					/>
@@ -120,17 +142,17 @@
 				<div class="form-group">
 					<label for="descripcion">
 						Descripción Detallada <span class="required">*</span>
-						<span class="hint">(mínimo 100 caracteres)</span>
+						<span class="hint">(mínimo 50 caracteres)</span>
 					</label>
 					<textarea
 						id="descripcion"
 						bind:value={descripcion}
-						placeholder="Explica en detalle qué sucedió, cuándo ocurrió, qué pasos seguiste, etc. Entre más información proporciones, más rápido podremos ayudarte."
+						placeholder="Describe qué pasó: ¿No llegó un mensaje? ¿El bot respondió mal? ¿No se subió una imagen? Incluye hora y detalles importantes."
 						required
-						minlength="100"
-						rows="8"
+						minlength="50"
+						rows="6"
 					></textarea>
-					<span class="char-count">{descripcion.length}/100</span>
+					<span class="char-count">{descripcion.length}/50</span>
 				</div>
 
 				<!-- Captura de pantalla -->
@@ -171,15 +193,15 @@
 </div>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 	:global(body) {
 		margin: 0;
 		padding: 0;
-		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-		background: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #0ba360 75%, #3cba92 100%);
+		font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 15%, #f093fb 30%, #4facfe 45%, #00f2fe 60%, #43e97b 75%, #38f9d7 90%, #ff6b9d 100%);
 		background-size: 400% 400%;
-		animation: gradientShift 20s ease infinite;
+		animation: gradientShift 25s ease infinite;
 		min-height: 100vh;
 		position: relative;
 		overflow-x: hidden;
@@ -193,13 +215,14 @@
 		right: 0;
 		bottom: 0;
 		background:
-			radial-gradient(circle at 20% 30%, rgba(11, 163, 96, 0.4), transparent 40%),
-			radial-gradient(circle at 80% 70%, rgba(60, 186, 146, 0.35), transparent 45%),
-			radial-gradient(circle at 50% 50%, rgba(32, 58, 67, 0.3), transparent 50%),
-			radial-gradient(circle at 10% 80%, rgba(15, 32, 39, 0.25), transparent 35%);
+			radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.5), transparent 35%),
+			radial-gradient(circle at 80% 70%, rgba(255, 107, 157, 0.4), transparent 40%),
+			radial-gradient(circle at 50% 50%, rgba(67, 233, 123, 0.45), transparent 45%),
+			radial-gradient(circle at 10% 80%, rgba(240, 147, 251, 0.35), transparent 38%),
+			radial-gradient(circle at 90% 20%, rgba(56, 249, 215, 0.4), transparent 42%);
 		pointer-events: none;
 		z-index: 0;
-		animation: floatBubbles 25s ease-in-out infinite;
+		animation: floatBubbles 30s ease-in-out infinite;
 	}
 
 	:global(body::after) {
@@ -210,11 +233,11 @@
 		width: 200%;
 		height: 200%;
 		background:
-			repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(11, 163, 96, 0.03) 2px, rgba(11, 163, 96, 0.03) 4px),
-			repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(60, 186, 146, 0.03) 2px, rgba(60, 186, 146, 0.03) 4px);
+			repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.04) 2px, rgba(255, 255, 255, 0.04) 4px),
+			repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 255, 255, 0.04) 2px, rgba(255, 255, 255, 0.04) 4px);
 		pointer-events: none;
 		z-index: 0;
-		animation: gridMove 40s linear infinite;
+		animation: gridMove 50s linear infinite;
 	}
 
 	@keyframes gradientShift {
@@ -263,15 +286,16 @@
 	}
 
 	header h1 {
-		font-size: 3.5rem;
-		font-weight: 800;
+		font-size: 3.8rem;
+		font-weight: 900;
 		margin: 0 0 0.75rem 0;
-		background: linear-gradient(135deg, #3cba92 0%, #0ba360 50%, #ffffff 100%);
+		background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 30%, #e0f2fe 60%, #ffffff 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
-		filter: drop-shadow(0 4px 12px rgba(60, 186, 146, 0.4));
-		letter-spacing: -0.02em;
+		filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
+		letter-spacing: -0.03em;
+		text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
 	}
 
 	header p {
@@ -481,25 +505,30 @@
 
 	.btn-primary {
 		width: 100%;
-		padding: 1.25rem;
-		background: linear-gradient(135deg, #0ba360 0%, #3cba92 50%, #0ba360 100%);
-		background-size: 200% 200%;
+		padding: 1.35rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #764ba2 75%, #667eea 100%);
+		background-size: 300% 300%;
 		color: white;
 		border: none;
-		border-radius: 16px;
-		font-size: 1.1rem;
-		font-weight: 700;
+		border-radius: 18px;
+		font-size: 1.05rem;
+		font-weight: 800;
 		cursor: pointer;
-		transition: all 0.3s ease;
+		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 		box-shadow:
-			0 8px 24px rgba(11, 163, 96, 0.5),
-			0 4px 12px rgba(60, 186, 146, 0.3),
-			inset 0 1px 0 rgba(255, 255, 255, 0.2);
-		letter-spacing: 0.02em;
+			0 10px 30px rgba(102, 126, 234, 0.6),
+			0 5px 15px rgba(118, 75, 162, 0.4),
+			inset 0 2px 0 rgba(255, 255, 255, 0.25);
+		letter-spacing: 0.05em;
 		text-transform: uppercase;
-		font-size: 0.95rem;
 		position: relative;
 		overflow: hidden;
+		animation: buttonGlow 3s ease infinite;
+	}
+
+	@keyframes buttonGlow {
+		0%, 100% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
 	}
 
 	.btn-primary::before {
@@ -509,8 +538,8 @@
 		left: -100%;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-		transition: left 0.5s ease;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+		transition: left 0.6s ease;
 	}
 
 	.btn-primary:hover:not(:disabled)::before {
@@ -518,12 +547,11 @@
 	}
 
 	.btn-primary:hover:not(:disabled) {
-		transform: translateY(-3px);
+		transform: translateY(-4px) scale(1.02);
 		box-shadow:
-			0 12px 36px rgba(11, 163, 96, 0.6),
-			0 6px 18px rgba(60, 186, 146, 0.4),
-			inset 0 1px 0 rgba(255, 255, 255, 0.3);
-		background-position: 100% 50%;
+			0 15px 45px rgba(102, 126, 234, 0.7),
+			0 8px 25px rgba(118, 75, 162, 0.5),
+			inset 0 2px 0 rgba(255, 255, 255, 0.35);
 	}
 
 	.btn-primary:active:not(:disabled) {

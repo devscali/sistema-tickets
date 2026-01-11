@@ -1,12 +1,12 @@
 // Tipos TypeScript para nuestro sistema de tickets
 
 export type Categoria =
-	| 'Reporte de Bug'
-	| 'Solicitud de Función'
+	| 'WhatsApp'
+	| 'Messenger'
+	| 'Instagram'
+	| 'Entrenamiento de Bot'
 	| 'Problema Técnico'
-	| 'Facturación'
-	| 'Problema de Cuenta'
-	| 'Pregunta General';
+	| 'Otro';
 
 export type Estado = 'Nuevo' | 'En Progreso' | 'Resuelto' | 'Cerrado';
 
@@ -15,6 +15,7 @@ export interface Ticket {
 	numero: number; // #00001, #00002, etc.
 	titulo: string;
 	descripcion: string;
+	nombre_paciente: string;
 	categoria: Categoria;
 	estado: Estado;
 	captura_url: string;
@@ -36,12 +37,12 @@ export interface TicketConConteo extends Ticket {
 
 // Constantes para usar en la UI
 export const CATEGORIAS: Categoria[] = [
-	'Reporte de Bug',
-	'Solicitud de Función',
+	'WhatsApp',
+	'Messenger',
+	'Instagram',
+	'Entrenamiento de Bot',
 	'Problema Técnico',
-	'Facturación',
-	'Problema de Cuenta',
-	'Pregunta General'
+	'Otro'
 ];
 
 export const ESTADOS: Estado[] = ['Nuevo', 'En Progreso', 'Resuelto', 'Cerrado'];

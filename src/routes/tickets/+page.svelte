@@ -117,10 +117,10 @@
 </div>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 	:global(body) {
-		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	}
 
 	.container {
@@ -155,35 +155,42 @@
 	header h1 {
 		margin: 0;
 		font-size: 3rem;
-		font-weight: 800;
-		background: linear-gradient(135deg, #3cba92 0%, #0ba360 50%, #ffffff 100%);
+		font-weight: 900;
+		background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 30%, #e0f2fe 60%, #ffffff 100%);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-clip: text;
-		filter: drop-shadow(0 4px 12px rgba(60, 186, 146, 0.4));
-		letter-spacing: -0.02em;
+		filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
+		letter-spacing: -0.03em;
 	}
 
 	.btn-primary {
 		display: inline-block;
-		padding: 0.875rem 1.75rem;
-		background: linear-gradient(135deg, #0ba360 0%, #3cba92 100%);
+		padding: 0.95rem 2rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+		background-size: 200% 200%;
 		color: white;
 		text-decoration: none;
-		border-radius: 14px;
-		font-weight: 700;
+		border-radius: 16px;
+		font-weight: 800;
 		transition: all 0.3s ease;
 		box-shadow:
-			0 6px 20px rgba(11, 163, 96, 0.4),
-			inset 0 1px 0 rgba(255, 255, 255, 0.2);
-		letter-spacing: 0.01em;
+			0 8px 24px rgba(102, 126, 234, 0.5),
+			inset 0 2px 0 rgba(255, 255, 255, 0.25);
+		letter-spacing: 0.02em;
+		animation: buttonGlow 3s ease infinite;
+	}
+
+	@keyframes buttonGlow {
+		0%, 100% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
 	}
 
 	.btn-primary:hover {
-		transform: translateY(-2px);
+		transform: translateY(-3px) scale(1.03);
 		box-shadow:
-			0 8px 28px rgba(11, 163, 96, 0.5),
-			inset 0 1px 0 rgba(255, 255, 255, 0.3);
+			0 10px 32px rgba(102, 126, 234, 0.6),
+			inset 0 2px 0 rgba(255, 255, 255, 0.35);
 	}
 
 	.filters {

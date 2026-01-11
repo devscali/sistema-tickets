@@ -12,14 +12,15 @@ CREATE TABLE tickets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   numero SERIAL UNIQUE NOT NULL, -- #00001, #00002, etc.
   titulo VARCHAR(255) NOT NULL CHECK (char_length(titulo) >= 15),
-  descripcion TEXT NOT NULL CHECK (char_length(descripcion) >= 100),
+  descripcion TEXT NOT NULL CHECK (char_length(descripcion) >= 50),
+  nombre_paciente VARCHAR(255) NOT NULL CHECK (char_length(nombre_paciente) >= 2),
   categoria VARCHAR(50) NOT NULL CHECK (categoria IN (
-    'Reporte de Bug',
-    'Solicitud de Función',
+    'WhatsApp',
+    'Messenger',
+    'Instagram',
+    'Entrenamiento de Bot',
     'Problema Técnico',
-    'Facturación',
-    'Problema de Cuenta',
-    'Pregunta General'
+    'Otro'
   )),
   estado VARCHAR(20) NOT NULL DEFAULT 'Nuevo' CHECK (estado IN (
     'Nuevo',
