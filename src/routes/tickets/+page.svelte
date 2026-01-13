@@ -50,8 +50,11 @@
 
 <div class="container">
 	<header>
-		<h1>📋 Todos los Tickets</h1>
-		<a href="/" class="btn-primary">+ Crear Nuevo Ticket</a>
+		<h1><span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;">📋</span> Todos los Tickets</h1>
+		<div class="header-buttons">
+			<a href="/" class="btn-home">🏠 Inicio</a>
+			<a href="/" class="btn-primary">+ Crear Nuevo Ticket</a>
+		</div>
 	</header>
 
 	<!-- Filtros -->
@@ -162,6 +165,34 @@
 		background-clip: text;
 		filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
 		letter-spacing: -0.03em;
+	}
+
+	.header-buttons {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+
+	.btn-home {
+		display: inline-block;
+		padding: 0.95rem 2rem;
+		background: rgba(255, 255, 255, 0.15);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		color: white;
+		text-decoration: none;
+		border-radius: 16px;
+		font-weight: 700;
+		transition: all 0.3s ease;
+		border: 2px solid rgba(255, 255, 255, 0.25);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	}
+
+	.btn-home:hover {
+		background: rgba(255, 255, 255, 0.25);
+		transform: translateY(-3px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		border-color: rgba(255, 255, 255, 0.4);
 	}
 
 	.btn-primary {
