@@ -6,11 +6,13 @@ import {
 	getDocs,
 	addDoc,
 	updateDoc,
+	deleteDoc,
 	query,
 	where,
 	orderBy,
 	getCountFromServer
 } from 'firebase/firestore';
+import { deleteObject } from 'firebase/storage';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import type { Ticket, Comentario, TicketConConteo, Categoria, Estado } from './types';
 
@@ -187,6 +189,42 @@ export async function actualizarEstadoTicket(ticketId: string, nuevoEstado: Esta
 		estado: nuevoEstado,
 		updated_at: new Date().toISOString()
 	});
+}
+
+/**
+ * Editar un ticket existente
+ */
+export async function editarTicket(
+	ticketId: string,
+	datos: {
+		titulo?: string;
+		descripcion?: string;
+		nombre_paciente?: string;
+		categoria?: Categoria;
+	}
+): Promise<void> {
+	const ticketRef = doc(db, 'tickets', ticketId);
+	await updateDoc(ticketRef, {
+		...datos,
+		updated_at: new Date().toISOString()
+	});
+}
+
+/**
+ * Eliminar un ticket y sus comentarios asociados
+ */
+export async function eliminarTicket(ticketId: string): Promise<void> {
+	// 1. Eliminar todos los comentarios del ticket
+	const comentariosQuery = query(comentariosCollection, where('ticket_id', '==', ticketId));
+	const comentariosSnapshot = await getDocs(comentariosQuery);
+
+	for (const comentarioDoc of comentariosSnapshot.docs) {
+		await deleteDoc(comentarioDoc.ref);
+	}
+
+	// 2. Eliminar el ticket
+	const ticketRef = doc(db, 'tickets', ticketId);
+	await deleteDoc(ticketRef);
 }
 
 // ============================================

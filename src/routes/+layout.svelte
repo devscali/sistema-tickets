@@ -9,7 +9,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
-		href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fjalla+One&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
 		rel="stylesheet"
 	/>
 </svelte:head>
@@ -18,17 +18,17 @@
 
 <style>
 	:global(*) {
-		font-family: 'Fjalla One', sans-serif;
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 	}
 
 	:global(body) {
-		font-family: 'Fjalla One', sans-serif;
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
 
-	:global(h1, h2, h3, h4, h5, h6) {
+	:global(h1) {
 		font-family: 'Bebas Neue', sans-serif;
-		letter-spacing: 1px;
+		letter-spacing: 2px;
 	}
 </style>
