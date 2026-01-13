@@ -50,10 +50,29 @@
 
 <div class="container">
 	<header>
-		<h1><span style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;">📋</span> Todos los Tickets</h1>
+		<h1>
+			<svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+				<rect x="9" y="3" width="6" height="4" rx="1"/>
+				<path d="M9 12h6M9 16h6"/>
+			</svg>
+			Todos los Tickets
+		</h1>
 		<div class="header-buttons">
-			<a href="/" class="btn-home">🏠 Inicio</a>
-			<a href="/" class="btn-primary">+ Crear Nuevo Ticket</a>
+			<a href="/" class="btn-home">
+				<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+					<polyline points="9 22 9 12 15 12 15 22"/>
+				</svg>
+				Inicio
+			</a>
+			<a href="/" class="btn-primary">
+				<svg class="btn-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<line x1="12" y1="5" x2="12" y2="19"/>
+					<line x1="5" y1="12" x2="19" y2="12"/>
+				</svg>
+				Crear Nuevo Ticket
+			</a>
 		</div>
 	</header>
 
@@ -107,7 +126,12 @@
 
 					<div class="ticket-footer">
 						<span class="categoria-badge">{ticket.categoria}</span>
-						<span class="comentarios-count">💬 {ticket.total_comentarios}</span>
+						<span class="comentarios-count">
+							<svg class="comment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+							</svg>
+							{ticket.total_comentarios}
+						</span>
 					</div>
 
 					<div class="ticket-date">
@@ -165,6 +189,17 @@
 		background-clip: text;
 		filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
 		letter-spacing: -0.03em;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.header-icon {
+		width: 2.75rem;
+		height: 2.75rem;
+		stroke: #3cba92;
+		filter: drop-shadow(0 0 10px rgba(60, 186, 146, 0.5));
+		flex-shrink: 0;
 	}
 
 	.header-buttons {
@@ -174,7 +209,9 @@
 	}
 
 	.btn-home {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.95rem 2rem;
 		background: rgba(255, 255, 255, 0.15);
 		backdrop-filter: blur(10px);
@@ -188,6 +225,11 @@
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 	}
 
+	.btn-icon {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
 	.btn-home:hover {
 		background: rgba(255, 255, 255, 0.25);
 		transform: translateY(-3px);
@@ -196,7 +238,9 @@
 	}
 
 	.btn-primary {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.95rem 2rem;
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
 		background-size: 200% 200%;
@@ -210,6 +254,11 @@
 			inset 0 2px 0 rgba(255, 255, 255, 0.25);
 		letter-spacing: 0.02em;
 		animation: buttonGlow 3s ease infinite;
+	}
+
+	.btn-icon-plus {
+		width: 1.25rem;
+		height: 1.25rem;
 	}
 
 	@keyframes buttonGlow {
@@ -440,9 +489,17 @@
 	}
 
 	.comentarios-count {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
 		font-size: 0.9rem;
 		color: rgba(255, 255, 255, 0.7);
 		font-weight: 500;
+	}
+
+	.comment-icon {
+		width: 1rem;
+		height: 1rem;
 	}
 
 	.ticket-date {

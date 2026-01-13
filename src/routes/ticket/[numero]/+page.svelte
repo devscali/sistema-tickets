@@ -261,8 +261,13 @@
 			<div class="modal-overlay" on:click|self={() => mostrarModalAgente = false}>
 				<div class="modal-agent">
 					<button class="modal-close" on:click={() => mostrarModalAgente = false}>✕</button>
-					<div class="modal-icon">👤</div>
-					<h3>Identificate</h3>
+					<div class="modal-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+							<circle cx="12" cy="7" r="4"/>
+						</svg>
+					</div>
+					<h3>Identifícate</h3>
 					<p>Ingresa tu nombre para identificar tus comentarios</p>
 					<input
 						type="text"
@@ -282,9 +287,15 @@
 		{#if mostrarConfirmacionEliminar}
 			<div class="modal-overlay">
 				<div class="modal-delete">
-					<div class="modal-icon danger">!</div>
+					<div class="modal-icon danger">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+							<line x1="10" y1="11" x2="10" y2="17"/>
+							<line x1="14" y1="11" x2="14" y2="17"/>
+						</svg>
+					</div>
 					<h3>Eliminar Ticket</h3>
-					<p>Esta accion no se puede deshacer</p>
+					<p>Esta acción no se puede deshacer</p>
 					<div class="modal-buttons">
 						<button class="btn-cancel" on:click={() => mostrarConfirmacionEliminar = false}>Cancelar</button>
 						<button class="btn-delete" on:click={confirmarEliminar} disabled={eliminando}>
@@ -297,15 +308,29 @@
 
 		<!-- Header -->
 		<header class="ticket-header">
-			<a href="/tickets" class="back-btn">← Tickets</a>
+			<a href="/tickets" class="back-btn">
+				<svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="19" y1="12" x2="5" y2="12"/>
+					<polyline points="12 19 5 12 12 5"/>
+				</svg>
+				Tickets
+			</a>
 			<div class="ticket-id">#{String(ticket.numero).padStart(5, '0')}</div>
 			{#if nombreAgente}
 				<button class="agent-badge" on:click={cambiarAgente}>
-					👤 {nombreAgente}
+					<svg class="agent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+						<circle cx="12" cy="7" r="4"/>
+					</svg>
+					{nombreAgente}
 				</button>
 			{:else}
 				<button class="agent-badge empty" on:click={() => mostrarModalAgente = true}>
-					👤 Identificarse
+					<svg class="agent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+						<circle cx="12" cy="7" r="4"/>
+					</svg>
+					Identificarse
 				</button>
 			{/if}
 		</header>
@@ -347,15 +372,30 @@
 					<div class="ticket-top">
 						<h1>{ticket.titulo}</h1>
 						<div class="ticket-actions">
-							<button class="btn-icon edit" on:click={iniciarEdicion} title="Editar">✏️</button>
-							<button class="btn-icon delete" on:click={() => mostrarConfirmacionEliminar = true} title="Eliminar">🗑️</button>
+							<button class="btn-icon edit" on:click={iniciarEdicion} title="Editar">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+									<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+								</svg>
+							</button>
+							<button class="btn-icon delete" on:click={() => mostrarConfirmacionEliminar = true} title="Eliminar">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+								</svg>
+							</button>
 						</div>
 					</div>
 
 					<div class="ticket-badges">
 						<span class="badge estado" style="background: {getEstadoColor(ticket.estado)}">{ticket.estado}</span>
 						<span class="badge categoria">{ticket.categoria}</span>
-						<span class="badge paciente">👤 {ticket.nombre_paciente}</span>
+						<span class="badge paciente">
+							<svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+								<circle cx="12" cy="7" r="4"/>
+							</svg>
+							{ticket.nombre_paciente}
+						</span>
 					</div>
 
 					<div class="estado-change">
@@ -410,8 +450,10 @@
 
 					{#if comentarios.length === 0}
 						<div class="no-comments">
-							<span>💬</span>
-							<p>Sin comentarios aun</p>
+							<svg class="no-comments-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+								<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+							</svg>
+							<p>Sin comentarios aún</p>
 						</div>
 					{/if}
 				</div>
@@ -421,7 +463,13 @@
 					<h3>Agregar comentario</h3>
 					{#if !nombreAgente}
 						<div class="agent-warning">
-							<button on:click={() => mostrarModalAgente = true}>👤 Identificate primero</button>
+							<button on:click={() => mostrarModalAgente = true}>
+								<svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+									<circle cx="12" cy="7" r="4"/>
+								</svg>
+								Identifícate primero
+							</button>
 						</div>
 					{:else}
 						<form on:submit|preventDefault={enviarComentario}>
@@ -432,13 +480,18 @@
 							></textarea>
 
 							<div class="file-input">
-								<label for="file-comment">📎 Adjuntar imagen</label>
+								<label for="file-comment">
+									<svg class="attach-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+									</svg>
+									Adjuntar imagen
+								</label>
 								<input id="file-comment" type="file" accept="image/*" on:change={manejarArchivoSeleccionado} />
 							</div>
 
 							{#if capturaPreview}
 								<div class="preview">
-									<img src={capturaPreview} alt="Preview" />
+									<img src={capturaPreview} alt="Vista previa" />
 									<button type="button" class="remove-btn" on:click={() => { capturaFile = null; capturaPreview = null; }}>✕</button>
 								</div>
 							{/if}
@@ -534,6 +587,9 @@
 	}
 
 	.back-btn {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
 		color: rgba(255,255,255,0.8);
 		text-decoration: none;
 		font-weight: 500;
@@ -547,6 +603,11 @@
 		background: rgba(255,255,255,0.2);
 	}
 
+	.back-icon {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+
 	.ticket-id {
 		font-family: monospace;
 		font-size: 1.25rem;
@@ -555,6 +616,9 @@
 	}
 
 	.agent-badge {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
 		margin-left: auto;
 		padding: 0.5rem 1rem;
 		background: rgba(46, 204, 113, 0.2);
@@ -574,6 +638,11 @@
 		background: rgba(231, 76, 60, 0.2);
 		border-color: rgba(231, 76, 60, 0.4);
 		color: #e74c3c;
+	}
+
+	.agent-icon {
+		width: 1.1rem;
+		height: 1.1rem;
 	}
 
 	/* Main content */
@@ -619,16 +688,31 @@
 		border: none;
 		border-radius: 8px;
 		cursor: pointer;
-		font-size: 1rem;
 		transition: transform 0.2s, background 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.btn-icon svg {
+		width: 18px;
+		height: 18px;
 	}
 
 	.btn-icon.edit {
 		background: #ebf5fb;
 	}
 
+	.btn-icon.edit svg {
+		stroke: #3498db;
+	}
+
 	.btn-icon.delete {
 		background: #fdedec;
+	}
+
+	.btn-icon.delete svg {
+		stroke: #e74c3c;
 	}
 
 	.btn-icon:hover {
@@ -659,8 +743,16 @@
 	}
 
 	.badge.paciente {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
 		background: #f5eef8;
 		color: #8e44ad;
+	}
+
+	.badge-icon {
+		width: 0.9rem;
+		height: 0.9rem;
 	}
 
 	.estado-change {
@@ -830,10 +922,11 @@
 		color: #95a5a6;
 	}
 
-	.no-comments span {
-		font-size: 2rem;
-		display: block;
+	.no-comments-icon {
+		width: 3rem;
+		height: 3rem;
 		margin-bottom: 0.5rem;
+		opacity: 0.5;
 	}
 
 	/* New comment */
@@ -854,6 +947,9 @@
 	}
 
 	.agent-warning button {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.75rem 1.5rem;
 		background: #f39c12;
 		color: white;
@@ -866,6 +962,11 @@
 
 	.agent-warning button:hover {
 		background: #e67e22;
+	}
+
+	.warning-icon {
+		width: 1.25rem;
+		height: 1.25rem;
 	}
 
 	.new-comment textarea {
@@ -890,7 +991,9 @@
 	}
 
 	.file-input label {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.5rem 1rem;
 		background: #f0f0f0;
 		border-radius: 6px;
@@ -901,6 +1004,12 @@
 
 	.file-input label:hover {
 		background: #e0e0e0;
+	}
+
+	.attach-icon {
+		width: 1.1rem;
+		height: 1.1rem;
+		stroke: #7f8c8d;
 	}
 
 	.file-input input {
@@ -1016,15 +1125,21 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.5rem;
 		margin: 0 auto 1rem;
+	}
+
+	.modal-icon svg {
+		width: 28px;
+		height: 28px;
+		stroke: #3498db;
 	}
 
 	.modal-icon.danger {
 		background: #fdedec;
-		color: #e74c3c;
-		font-weight: bold;
-		font-size: 2rem;
+	}
+
+	.modal-icon.danger svg {
+		stroke: #e74c3c;
 	}
 
 	.modal-agent h3, .modal-delete h3 {

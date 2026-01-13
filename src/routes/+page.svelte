@@ -79,9 +79,26 @@
 
 <div class="container">
 	<header>
-		<h1><span class="emoji">🤖</span> Ciplastic CRM Care</h1>
+		<h1>
+			<svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/>
+				<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+				<circle cx="12" cy="7" r="4"/>
+				<path d="M12 14l-2 4h4l-2-4z"/>
+				<circle cx="9" cy="9" r="1" fill="currentColor"/>
+				<circle cx="15" cy="9" r="1" fill="currentColor"/>
+			</svg>
+			Ciplastic CRM Care
+		</h1>
 		<p>Reporta problemas con mensajes, bot o sistema</p>
-		<a href="/tickets" class="btn-secondary">Ver todos los tickets</a>
+		<a href="/tickets" class="btn-secondary">
+			<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+				<rect x="9" y="3" width="6" height="4" rx="1"/>
+				<path d="M9 12h6M9 16h6"/>
+			</svg>
+			Ver todos los tickets
+		</a>
 	</header>
 
 	<main>
@@ -166,7 +183,7 @@
 
 					{#if capturaPreview}
 						<div class="image-preview">
-							<img src={capturaPreview} alt="Preview" />
+							<img src={capturaPreview} alt="Vista previa" />
 						</div>
 					{/if}
 				</div>
@@ -174,7 +191,12 @@
 				<!-- Error -->
 				{#if error}
 					<div class="error-message">
-						⚠️ {error}
+						<svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="12" y1="8" x2="12" y2="12"/>
+							<circle cx="12" cy="16" r="1" fill="currentColor"/>
+						</svg>
+						{error}
 					</div>
 				{/if}
 
@@ -293,13 +315,13 @@
 		text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
 	}
 
-	header h1 .emoji {
-		font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
-		-webkit-text-fill-color: initial;
-		background: none;
-		-webkit-background-clip: initial;
-		background-clip: initial;
-		filter: none;
+	.header-icon {
+		width: 3.5rem;
+		height: 3.5rem;
+		vertical-align: middle;
+		margin-right: 0.5rem;
+		stroke: #3cba92;
+		filter: drop-shadow(0 0 10px rgba(60, 186, 146, 0.5));
 	}
 
 	header p {
@@ -310,7 +332,9 @@
 	}
 
 	.btn-secondary {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 		padding: 0.75rem 1.5rem;
 		background: rgba(255, 255, 255, 0.15);
 		backdrop-filter: blur(10px);
@@ -322,6 +346,11 @@
 		font-weight: 600;
 		transition: all 0.3s ease;
 		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	}
+
+	.btn-icon {
+		width: 1.25rem;
+		height: 1.25rem;
 	}
 
 	.btn-secondary:hover {
@@ -496,6 +525,9 @@
 	}
 
 	.error-message {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
 		background: rgba(255, 107, 157, 0.2);
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
@@ -505,6 +537,13 @@
 		border-radius: 12px;
 		margin-bottom: 1rem;
 		font-weight: 500;
+	}
+
+	.error-icon {
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		stroke: #ff6b9d;
 	}
 
 	.btn-primary {
