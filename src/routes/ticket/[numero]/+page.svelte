@@ -258,8 +258,9 @@
 	{:else if ticket}
 		<!-- Modal Nombre Agente -->
 		{#if mostrarModalAgente}
-			<div class="modal-overlay">
+			<div class="modal-overlay" on:click|self={() => mostrarModalAgente = false}>
 				<div class="modal-agent">
+					<button class="modal-close" on:click={() => mostrarModalAgente = false}>✕</button>
 					<div class="modal-icon">👤</div>
 					<h3>Identificate</h3>
 					<p>Ingresa tu nombre para identificar tus comentarios</p>
@@ -981,6 +982,30 @@
 		max-width: 360px;
 		width: 100%;
 		text-align: center;
+		position: relative;
+	}
+
+	.modal-close {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		width: 32px;
+		height: 32px;
+		border: none;
+		background: #f0f0f0;
+		border-radius: 50%;
+		font-size: 1rem;
+		cursor: pointer;
+		color: #7f8c8d;
+		transition: all 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.modal-close:hover {
+		background: #e0e0e0;
+		color: #2c3e50;
 	}
 
 	.modal-icon {
