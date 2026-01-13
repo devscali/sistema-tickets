@@ -60,16 +60,11 @@
 			return;
 		}
 
-		if (!capturaFile) {
-			error = 'Debes adjuntar una captura de pantalla';
-			return;
-		}
-
 		try {
 			cargando = true;
 
-			// Crear ticket
-			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile);
+			// Crear ticket (captura es opcional)
+			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile || undefined);
 
 			// Redirigir a la página del ticket
 			goto(`/ticket/${nuevoTicket.numero}`);
@@ -159,15 +154,14 @@
 				<!-- Captura de pantalla -->
 				<div class="form-group">
 					<label for="captura">
-						Captura de Pantalla <span class="required">*</span>
-						<span class="hint">(máx. 5MB)</span>
+						Captura de Pantalla
+						<span class="hint">(opcional, máx. 5MB)</span>
 					</label>
 					<input
 						id="captura"
 						type="file"
 						accept="image/*"
 						on:change={manejarArchivoSeleccionado}
-						required
 					/>
 
 					{#if capturaPreview}

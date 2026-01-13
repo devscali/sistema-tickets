@@ -130,34 +130,52 @@ export async function crearTicket(
 	descripcion: string,
 	nombrePaciente: string,
 	categoria: Categoria,
-	capturaFile: File
+	capturaFile?: File
 ): Promise<Ticket> {
-	// 1. Subir la captura a Firebase Storage
-	const capturaUrl = await subirCaptura(capturaFile);
+	try {
+		// 1. Subir la captura a Firebase Storage (si existe)
+		let capturaUrl: string | undefined;
+		if (capturaFile) {
+			console.log('Subiendo imagen...');
+			capturaUrl = await subirCaptura(capturaFile);
+			console.log('Imagen subida:', capturaUrl);
+		}
 
-	// 2. Obtener el siguiente número de ticket
-	const numero = await obtenerSiguienteNumero();
+		// 2. Obtener el siguiente número de ticket
+		console.log('Obteniendo número de ticket...');
+		const numero = await obtenerSiguienteNumero();
+		console.log('Número de ticket:', numero);
 
-	// 3. Crear el ticket en Firestore
-	const now = new Date().toISOString();
-	const ticketData = {
-		numero,
-		titulo,
-		descripcion,
-		nombre_paciente: nombrePaciente,
-		categoria,
-		estado: 'Nuevo' as Estado,
-		captura_url: capturaUrl,
-		created_at: now,
-		updated_at: now
-	};
+		// 3. Crear el ticket en Firestore
+		const now = new Date().toISOString();
+		const ticketData: Record<string, unknown> = {
+			numero,
+			titulo,
+			descripcion,
+			nombre_paciente: nombrePaciente,
+			categoria,
+			estado: 'Nuevo' as Estado,
+			created_at: now,
+			updated_at: now
+		};
 
-	const docRef = await addDoc(ticketsCollection, ticketData);
+		// Solo agregar captura_url si existe
+		if (capturaUrl) {
+			ticketData.captura_url = capturaUrl;
+		}
 
-	return {
-		id: docRef.id,
-		...ticketData
-	} as Ticket;
+		console.log('Guardando ticket en Firestore...', ticketData);
+		const docRef = await addDoc(ticketsCollection, ticketData);
+		console.log('Ticket guardado con ID:', docRef.id);
+
+		return {
+			id: docRef.id,
+			...ticketData
+		} as Ticket;
+	} catch (error) {
+		console.error('Error detallado al crear ticket:', error);
+		throw error;
+	}
 }
 
 /**
