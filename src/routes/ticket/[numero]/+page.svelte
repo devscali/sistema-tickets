@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import {
 		obtenerTicketPorNumero,
 		obtenerComentarios,
 		crearComentario,
 		actualizarEstadoTicket,
+		editarTicket,
+		eliminarTicket,
 		validarImagen
 	} from '$lib/ticketService';
-	import { ESTADOS, ESTADO_COLORES, type Ticket, type Comentario, type Estado } from '$lib/types';
+	import { ESTADOS, ESTADO_COLORES, CATEGORIAS, type Ticket, type Comentario, type Estado, type Categoria } from '$lib/types';
 
 	let ticket: Ticket | null = null;
 	let comentarios: Comentario[] = [];
@@ -24,6 +27,18 @@
 
 	// Estado del ticket
 	let cambiandoEstado = false;
+
+	// Edición
+	let modoEdicion = false;
+	let editTitulo = '';
+	let editDescripcion = '';
+	let editNombrePaciente = '';
+	let editCategoria: Categoria = 'WhatsApp';
+	let guardandoEdicion = false;
+
+	// Eliminación
+	let mostrarConfirmacionEliminar = false;
+	let eliminando = false;
 
 	$: numeroTicket = parseInt($page.params.numero);
 
@@ -136,6 +151,61 @@
 			minute: '2-digit'
 		});
 	}
+
+	function iniciarEdicion() {
+		if (!ticket) return;
+		editTitulo = ticket.titulo;
+		editDescripcion = ticket.descripcion;
+		editNombrePaciente = ticket.nombre_paciente;
+		editCategoria = ticket.categoria;
+		modoEdicion = true;
+	}
+
+	function cancelarEdicion() {
+		modoEdicion = false;
+	}
+
+	async function guardarEdicion() {
+		if (!ticket) return;
+
+		try {
+			guardandoEdicion = true;
+			await editarTicket(ticket.id, {
+				titulo: editTitulo,
+				descripcion: editDescripcion,
+				nombre_paciente: editNombrePaciente,
+				categoria: editCategoria
+			});
+
+			// Actualizar el ticket local
+			ticket.titulo = editTitulo;
+			ticket.descripcion = editDescripcion;
+			ticket.nombre_paciente = editNombrePaciente;
+			ticket.categoria = editCategoria;
+			ticket = ticket;
+
+			modoEdicion = false;
+		} catch (err) {
+			console.error('Error al editar ticket:', err);
+			alert('No se pudo guardar los cambios');
+		} finally {
+			guardandoEdicion = false;
+		}
+	}
+
+	async function confirmarEliminar() {
+		if (!ticket) return;
+
+		try {
+			eliminando = true;
+			await eliminarTicket(ticket.id);
+			goto('/tickets');
+		} catch (err) {
+			console.error('Error al eliminar ticket:', err);
+			alert('No se pudo eliminar el ticket');
+			eliminando = false;
+		}
+	}
 </script>
 
 {#if cargando}
@@ -155,10 +225,74 @@
 			<div class="ticket-number">#{String(ticket.numero).padStart(5, '0')}</div>
 		</div>
 
+		<!-- Modal de confirmación de eliminación -->
+		{#if mostrarConfirmacionEliminar}
+			<div class="modal-overlay" on:click={() => mostrarConfirmacionEliminar = false}>
+				<div class="modal" on:click|stopPropagation>
+					<h3>Eliminar Ticket</h3>
+					<p>¿Estás seguro de que quieres eliminar este ticket? Esta acción no se puede deshacer.</p>
+					<div class="modal-actions">
+						<button class="btn-cancel" on:click={() => mostrarConfirmacionEliminar = false} disabled={eliminando}>
+							Cancelar
+						</button>
+						<button class="btn-danger" on:click={confirmarEliminar} disabled={eliminando}>
+							{eliminando ? 'Eliminando...' : 'Sí, eliminar'}
+						</button>
+					</div>
+				</div>
+			</div>
+		{/if}
+
 		<!-- Ticket principal -->
 		<div class="ticket-main">
-			<div class="ticket-header">
-				<h1>{ticket.titulo}</h1>
+			{#if modoEdicion}
+				<!-- Modo edición -->
+				<div class="edit-form">
+					<h2>Editar Ticket</h2>
+
+					<div class="form-group">
+						<label for="edit-titulo">Título</label>
+						<input id="edit-titulo" type="text" bind:value={editTitulo} />
+					</div>
+
+					<div class="form-group">
+						<label for="edit-paciente">Nombre del Paciente</label>
+						<input id="edit-paciente" type="text" bind:value={editNombrePaciente} />
+					</div>
+
+					<div class="form-group">
+						<label for="edit-categoria">Categoría</label>
+						<select id="edit-categoria" bind:value={editCategoria}>
+							{#each CATEGORIAS as cat}
+								<option value={cat}>{cat}</option>
+							{/each}
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label for="edit-descripcion">Descripción</label>
+						<textarea id="edit-descripcion" bind:value={editDescripcion} rows="6"></textarea>
+					</div>
+
+					<div class="edit-actions">
+						<button class="btn-cancel" on:click={cancelarEdicion} disabled={guardandoEdicion}>
+							Cancelar
+						</button>
+						<button class="btn-primary" on:click={guardarEdicion} disabled={guardandoEdicion}>
+							{guardandoEdicion ? 'Guardando...' : 'Guardar Cambios'}
+						</button>
+					</div>
+				</div>
+			{:else}
+				<!-- Modo visualización -->
+				<div class="ticket-header">
+					<h1>{ticket.titulo}</h1>
+					<div class="ticket-actions">
+						<button class="btn-edit" on:click={iniciarEdicion}>Editar</button>
+						<button class="btn-danger-small" on:click={() => mostrarConfirmacionEliminar = true}>Eliminar</button>
+					</div>
+				</div>
+
 				<div class="estado-selector">
 					<label>Estado:</label>
 					<select bind:value={ticket.estado} on:change={(e) => cambiarEstado(e.currentTarget.value as Estado)} disabled={cambiandoEstado}>
@@ -167,20 +301,23 @@
 						{/each}
 					</select>
 				</div>
-			</div>
 
-			<div class="ticket-meta">
-				<span class="categoria">{ticket.categoria}</span>
-				<span class="fecha">{formatearFecha(ticket.created_at)}</span>
-			</div>
+				<div class="ticket-meta">
+					<span class="categoria">{ticket.categoria}</span>
+					<span class="paciente">Paciente: {ticket.nombre_paciente}</span>
+					<span class="fecha">{formatearFecha(ticket.created_at)}</span>
+				</div>
 
-			<div class="ticket-descripcion">
-				<p>{ticket.descripcion}</p>
-			</div>
+				<div class="ticket-descripcion">
+					<p>{ticket.descripcion}</p>
+				</div>
 
-			<div class="ticket-captura">
-				<img src={ticket.captura_url} alt="Captura del ticket" />
-			</div>
+				{#if ticket.captura_url}
+					<div class="ticket-captura">
+						<img src={ticket.captura_url} alt="Captura del ticket" />
+					</div>
+				{/if}
+			{/if}
 		</div>
 
 		<!-- Comentarios -->
@@ -545,9 +682,168 @@
 		cursor: not-allowed;
 	}
 
+	/* Botones de acción del ticket */
+	.ticket-actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.btn-edit {
+		padding: 0.5rem 1rem;
+		background: #3498db;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.btn-edit:hover {
+		background: #2980b9;
+	}
+
+	.btn-danger-small {
+		padding: 0.5rem 1rem;
+		background: #e74c3c;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.btn-danger-small:hover {
+		background: #c0392b;
+	}
+
+	/* Modal */
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.6);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+	}
+
+	.modal {
+		background: white;
+		border-radius: 12px;
+		padding: 2rem;
+		max-width: 400px;
+		width: 90%;
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+	}
+
+	.modal h3 {
+		margin: 0 0 1rem 0;
+		color: #2c3e50;
+	}
+
+	.modal p {
+		color: #7f8c8d;
+		margin-bottom: 1.5rem;
+	}
+
+	.modal-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: flex-end;
+	}
+
+	.btn-cancel {
+		padding: 0.75rem 1.5rem;
+		background: #ecf0f1;
+		color: #2c3e50;
+		border: none;
+		border-radius: 6px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.btn-cancel:hover:not(:disabled) {
+		background: #bdc3c7;
+	}
+
+	.btn-danger {
+		padding: 0.75rem 1.5rem;
+		background: #e74c3c;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.btn-danger:hover:not(:disabled) {
+		background: #c0392b;
+	}
+
+	.btn-danger:disabled,
+	.btn-cancel:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Formulario de edición */
+	.edit-form h2 {
+		margin: 0 0 1.5rem 0;
+		color: #2c3e50;
+	}
+
+	.edit-form input[type='text'],
+	.edit-form select {
+		width: 100%;
+		padding: 0.75rem;
+		border: 2px solid #ddd;
+		border-radius: 6px;
+		font-size: 1rem;
+		box-sizing: border-box;
+	}
+
+	.edit-form input:focus,
+	.edit-form select:focus,
+	.edit-form textarea:focus {
+		outline: none;
+		border-color: #3498db;
+	}
+
+	.edit-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: flex-end;
+		margin-top: 1.5rem;
+	}
+
+	.paciente {
+		background: #9b59b6;
+		color: white;
+		padding: 0.35rem 0.75rem;
+		border-radius: 12px;
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+
 	@media (max-width: 768px) {
 		.ticket-header {
 			flex-direction: column;
+			gap: 1rem;
+		}
+
+		.ticket-actions {
+			width: 100%;
+		}
+
+		.ticket-actions button {
+			flex: 1;
 		}
 
 		.estado-selector {
@@ -556,6 +852,14 @@
 
 		.estado-selector select {
 			flex: 1;
+		}
+
+		.edit-actions {
+			flex-direction: column;
+		}
+
+		.modal-actions {
+			flex-direction: column;
 		}
 	}
 </style>
