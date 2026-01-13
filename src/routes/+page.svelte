@@ -73,9 +73,10 @@
 
 			// Redirigir a la página del ticket
 			goto(`/ticket/${nuevoTicket.numero}`);
-		} catch (err) {
+		} catch (err: unknown) {
 			console.error('Error al crear ticket:', err);
-			error = 'Hubo un error al crear el ticket. Intenta de nuevo.';
+			const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
+			error = `Error: ${errorMsg}`;
 			cargando = false;
 		}
 	}
