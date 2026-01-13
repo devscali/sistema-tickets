@@ -79,7 +79,7 @@
 
 <div class="container">
 	<header>
-		<h1><span class="emoji">🤖</span> CRM Bot Médico</h1>
+		<h1><span class="emoji">🤖</span> Ciplastic CRM Care</h1>
 		<p>Reporta problemas con mensajes, bot o sistema</p>
 		<a href="/tickets" class="btn-secondary">Ver todos los tickets</a>
 	</header>
