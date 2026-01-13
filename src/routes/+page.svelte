@@ -79,9 +79,9 @@
 
 <div class="container">
 	<header>
-		<h1>🤖 CRM Bot Médico</h1>
+		<h1><span class="emoji">🤖</span> CRM Bot Médico</h1>
 		<p>Reporta problemas con mensajes, bot o sistema</p>
-		<a href="/tickets" class="btn-secondary">Ver todos los tickets →</a>
+		<a href="/tickets" class="btn-secondary">Ver todos los tickets</a>
 	</header>
 
 	<main>
@@ -291,6 +291,15 @@
 		filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3)) drop-shadow(0 2px 8px rgba(255, 255, 255, 0.5));
 		letter-spacing: -0.03em;
 		text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+	}
+
+	header h1 .emoji {
+		font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+		-webkit-text-fill-color: initial;
+		background: none;
+		-webkit-background-clip: initial;
+		background-clip: initial;
+		filter: none;
 	}
 
 	header p {
