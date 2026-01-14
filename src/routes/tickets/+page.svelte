@@ -10,9 +10,11 @@
 	// Filtros
 	let categoriaFiltro: Categoria | '' = '';
 	let estadoFiltro: Estado | '' = '';
+	let inicializado = false;
 
 	onMount(async () => {
 		await cargarTickets();
+		inicializado = true;
 	});
 
 	async function cargarTickets() {
@@ -31,8 +33,12 @@
 		}
 	}
 
-	// Recargar cuando cambian los filtros
-	$: if (categoriaFiltro !== undefined || estadoFiltro !== undefined) {
+	// Recargar cuando cambian los filtros (solo después de inicializar)
+	$: if (inicializado && (categoriaFiltro || categoriaFiltro === '')) {
+		cargarTickets();
+	}
+
+	$: if (inicializado && (estadoFiltro || estadoFiltro === '')) {
 		cargarTickets();
 	}
 

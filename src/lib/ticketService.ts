@@ -274,12 +274,16 @@ export async function crearComentario(
 	}
 
 	const now = new Date().toISOString();
-	const comentarioData = {
+	const comentarioData: Record<string, unknown> = {
 		ticket_id: ticketId,
 		contenido,
-		captura_url: capturaUrl,
 		created_at: now
 	};
+
+	// Solo agregar captura_url si existe
+	if (capturaUrl) {
+		comentarioData.captura_url = capturaUrl;
+	}
 
 	const docRef = await addDoc(comentariosCollection, comentarioData);
 
