@@ -66,8 +66,8 @@
 			// Crear ticket (captura es opcional)
 			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile || undefined);
 
-			// Redirigir a la página del ticket
-			goto(`/ticket/${nuevoTicket.numero}`);
+			// Redirigir a la página de agradecimiento
+			goto(`/gracias?ticket=${nuevoTicket.numero}`);
 		} catch (err: unknown) {
 			console.error('Error al crear ticket:', err);
 			const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
@@ -91,15 +91,7 @@
 			Ciplastic CRM Care
 		</h1>
 		<p>Reporta problemas con mensajes, bot o sistema</p>
-		<a href="/tickets" class="btn-secondary">
-			<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
-				<rect x="9" y="3" width="6" height="4" rx="1"/>
-				<path d="M9 12h6M9 16h6"/>
-			</svg>
-			Ver todos los tickets
-		</a>
-	</header>
+			</header>
 
 	<main>
 		<div class="form-card">
