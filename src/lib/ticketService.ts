@@ -142,6 +142,10 @@ export async function crearTicket(
 
 		if (error) {
 			console.error('Error creando ticket:', error);
+			console.error('Código:', error.code);
+			console.error('Mensaje:', error.message);
+			console.error('Detalles:', error.details);
+			console.error('Hint:', error.hint);
 			throw error;
 		}
 
