@@ -1,24 +1,6 @@
-// Servicio para manejar todas las operaciones de tickets con Firebase
-import { db, storage } from './firebaseClient';
-import {
-	collection,
-	doc,
-	getDocs,
-	addDoc,
-	updateDoc,
-	deleteDoc,
-	query,
-	where,
-	orderBy,
-	getCountFromServer
-} from 'firebase/firestore';
-import { deleteObject } from 'firebase/storage';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// Servicio para manejar todas las operaciones de tickets con Supabase
+import { supabase } from './supabaseClient';
 import type { Ticket, Comentario, TicketConConteo, Categoria, Estado } from './types';
-
-// Referencias a colecciones
-const ticketsCollection = collection(db, 'tickets');
-const comentariosCollection = collection(db, 'comentarios');
 
 // ============================================
 // TICKETS
@@ -28,15 +10,22 @@ const comentariosCollection = collection(db, 'comentarios');
  * Obtener el siguiente número de ticket
  */
 async function obtenerSiguienteNumero(): Promise<number> {
-	const snapshot = await getDocs(ticketsCollection);
-	let maxNumero = 0;
-	snapshot.forEach((doc) => {
-		const data = doc.data();
-		if (data.numero && data.numero > maxNumero) {
-			maxNumero = data.numero;
-		}
-	});
-	return maxNumero + 1;
+	const { data, error } = await supabase
+		.from('tickets')
+		.select('numero')
+		.order('numero', { ascending: false })
+		.limit(1);
+
+	if (error) {
+		console.error('Error obteniendo siguiente número:', error);
+		return 1;
+	}
+
+	if (!data || data.length === 0) {
+		return 1;
+	}
+
+	return (data[0].numero || 0) + 1;
 }
 
 /**
@@ -47,81 +36,62 @@ export async function obtenerTickets(
 	categoria?: Categoria,
 	estado?: Estado
 ): Promise<TicketConConteo[]> {
-	let q = query(ticketsCollection, orderBy('created_at', 'desc'));
+	let query = supabase
+		.from('tickets')
+		.select('*, comentarios:comentarios(count)')
+		.order('created_at', { ascending: false });
 
 	// Aplicar filtros si existen
-	if (categoria && estado) {
-		q = query(
-			ticketsCollection,
-			where('categoria', '==', categoria),
-			where('estado', '==', estado),
-			orderBy('created_at', 'desc')
-		);
-	} else if (categoria) {
-		q = query(
-			ticketsCollection,
-			where('categoria', '==', categoria),
-			orderBy('created_at', 'desc')
-		);
-	} else if (estado) {
-		q = query(ticketsCollection, where('estado', '==', estado), orderBy('created_at', 'desc'));
+	if (categoria) {
+		query = query.eq('categoria', categoria);
+	}
+	if (estado) {
+		query = query.eq('estado', estado);
 	}
 
-	const snapshot = await getDocs(q);
-	const tickets: TicketConConteo[] = [];
+	const { data, error } = await query;
 
-	for (const docSnap of snapshot.docs) {
-		const data = docSnap.data();
-
-		// Contar comentarios para este ticket
-		const comentariosQuery = query(comentariosCollection, where('ticket_id', '==', docSnap.id));
-		const comentariosSnapshot = await getCountFromServer(comentariosQuery);
-		const totalComentarios = comentariosSnapshot.data().count;
-
-		tickets.push({
-			id: docSnap.id,
-			numero: data.numero,
-			titulo: data.titulo,
-			descripcion: data.descripcion,
-			nombre_paciente: data.nombre_paciente,
-			categoria: data.categoria,
-			estado: data.estado,
-			captura_url: data.captura_url,
-			created_at: data.created_at,
-			updated_at: data.updated_at,
-			total_comentarios: totalComentarios
-		} as TicketConConteo);
+	if (error) {
+		console.error('Error obteniendo tickets:', error);
+		throw error;
 	}
 
-	return tickets;
+	// Mapear los resultados al tipo TicketConConteo
+	return (data || []).map((ticket) => ({
+		id: ticket.id,
+		numero: ticket.numero,
+		titulo: ticket.titulo,
+		descripcion: ticket.descripcion,
+		nombre_paciente: ticket.nombre_paciente,
+		categoria: ticket.categoria,
+		estado: ticket.estado,
+		captura_url: ticket.captura_url,
+		created_at: ticket.created_at,
+		updated_at: ticket.updated_at,
+		total_comentarios: ticket.comentarios?.[0]?.count || 0
+	})) as TicketConConteo[];
 }
 
 /**
  * Obtener un ticket específico por su número
  */
 export async function obtenerTicketPorNumero(numero: number): Promise<Ticket | null> {
-	const q = query(ticketsCollection, where('numero', '==', numero));
-	const snapshot = await getDocs(q);
+	const { data, error } = await supabase
+		.from('tickets')
+		.select('*')
+		.eq('numero', numero)
+		.single();
 
-	if (snapshot.empty) {
-		return null;
+	if (error) {
+		if (error.code === 'PGRST116') {
+			// No se encontró el ticket
+			return null;
+		}
+		console.error('Error obteniendo ticket:', error);
+		throw error;
 	}
 
-	const docSnap = snapshot.docs[0];
-	const data = docSnap.data();
-
-	return {
-		id: docSnap.id,
-		numero: data.numero,
-		titulo: data.titulo,
-		descripcion: data.descripcion,
-		nombre_paciente: data.nombre_paciente,
-		categoria: data.categoria,
-		estado: data.estado,
-		captura_url: data.captura_url,
-		created_at: data.created_at,
-		updated_at: data.updated_at
-	} as Ticket;
+	return data as Ticket;
 }
 
 /**
@@ -135,7 +105,7 @@ export async function crearTicket(
 	capturaFile?: File
 ): Promise<Ticket> {
 	try {
-		// 1. Subir la captura a Firebase Storage (si existe)
+		// 1. Subir la captura a Supabase Storage (si existe)
 		let capturaUrl: string | undefined;
 		if (capturaFile) {
 			console.log('Subiendo imagen...');
@@ -148,17 +118,14 @@ export async function crearTicket(
 		const numero = await obtenerSiguienteNumero();
 		console.log('Número de ticket:', numero);
 
-		// 3. Crear el ticket en Firestore
-		const now = new Date().toISOString();
+		// 3. Crear el ticket en Supabase
 		const ticketData: Record<string, unknown> = {
 			numero,
 			titulo,
 			descripcion,
 			nombre_paciente: nombrePaciente,
 			categoria,
-			estado: 'Nuevo' as Estado,
-			created_at: now,
-			updated_at: now
+			estado: 'Nuevo' as Estado
 		};
 
 		// Solo agregar captura_url si existe
@@ -166,14 +133,20 @@ export async function crearTicket(
 			ticketData.captura_url = capturaUrl;
 		}
 
-		console.log('Guardando ticket en Firestore...', ticketData);
-		const docRef = await addDoc(ticketsCollection, ticketData);
-		console.log('Ticket guardado con ID:', docRef.id);
+		console.log('Guardando ticket en Supabase...', ticketData);
+		const { data, error } = await supabase
+			.from('tickets')
+			.insert(ticketData)
+			.select()
+			.single();
 
-		return {
-			id: docRef.id,
-			...ticketData
-		} as Ticket;
+		if (error) {
+			console.error('Error creando ticket:', error);
+			throw error;
+		}
+
+		console.log('Ticket guardado con ID:', data.id);
+		return data as Ticket;
 	} catch (error) {
 		console.error('Error detallado al crear ticket:', error);
 		throw error;
@@ -184,11 +157,18 @@ export async function crearTicket(
  * Actualizar el estado de un ticket
  */
 export async function actualizarEstadoTicket(ticketId: string, nuevoEstado: Estado): Promise<void> {
-	const ticketRef = doc(db, 'tickets', ticketId);
-	await updateDoc(ticketRef, {
-		estado: nuevoEstado,
-		updated_at: new Date().toISOString()
-	});
+	const { error } = await supabase
+		.from('tickets')
+		.update({
+			estado: nuevoEstado,
+			updated_at: new Date().toISOString()
+		})
+		.eq('id', ticketId);
+
+	if (error) {
+		console.error('Error actualizando estado:', error);
+		throw error;
+	}
 }
 
 /**
@@ -203,11 +183,18 @@ export async function editarTicket(
 		categoria?: Categoria;
 	}
 ): Promise<void> {
-	const ticketRef = doc(db, 'tickets', ticketId);
-	await updateDoc(ticketRef, {
-		...datos,
-		updated_at: new Date().toISOString()
-	});
+	const { error } = await supabase
+		.from('tickets')
+		.update({
+			...datos,
+			updated_at: new Date().toISOString()
+		})
+		.eq('id', ticketId);
+
+	if (error) {
+		console.error('Error editando ticket:', error);
+		throw error;
+	}
 }
 
 /**
@@ -215,16 +202,26 @@ export async function editarTicket(
  */
 export async function eliminarTicket(ticketId: string): Promise<void> {
 	// 1. Eliminar todos los comentarios del ticket
-	const comentariosQuery = query(comentariosCollection, where('ticket_id', '==', ticketId));
-	const comentariosSnapshot = await getDocs(comentariosQuery);
+	const { error: comentariosError } = await supabase
+		.from('comentarios')
+		.delete()
+		.eq('ticket_id', ticketId);
 
-	for (const comentarioDoc of comentariosSnapshot.docs) {
-		await deleteDoc(comentarioDoc.ref);
+	if (comentariosError) {
+		console.error('Error eliminando comentarios:', comentariosError);
+		throw comentariosError;
 	}
 
 	// 2. Eliminar el ticket
-	const ticketRef = doc(db, 'tickets', ticketId);
-	await deleteDoc(ticketRef);
+	const { error: ticketError } = await supabase
+		.from('tickets')
+		.delete()
+		.eq('id', ticketId);
+
+	if (ticketError) {
+		console.error('Error eliminando ticket:', ticketError);
+		throw ticketError;
+	}
 }
 
 // ============================================
@@ -235,27 +232,18 @@ export async function eliminarTicket(ticketId: string): Promise<void> {
  * Obtener todos los comentarios de un ticket
  */
 export async function obtenerComentarios(ticketId: string): Promise<Comentario[]> {
-	const q = query(
-		comentariosCollection,
-		where('ticket_id', '==', ticketId),
-		orderBy('created_at', 'asc')
-	);
+	const { data, error } = await supabase
+		.from('comentarios')
+		.select('*')
+		.eq('ticket_id', ticketId)
+		.order('created_at', { ascending: true });
 
-	const snapshot = await getDocs(q);
-	const comentarios: Comentario[] = [];
+	if (error) {
+		console.error('Error obteniendo comentarios:', error);
+		throw error;
+	}
 
-	snapshot.forEach((docSnap) => {
-		const data = docSnap.data();
-		comentarios.push({
-			id: docSnap.id,
-			ticket_id: data.ticket_id,
-			contenido: data.contenido,
-			captura_url: data.captura_url,
-			created_at: data.created_at
-		} as Comentario);
-	});
-
-	return comentarios;
+	return (data || []) as Comentario[];
 }
 
 /**
@@ -273,11 +261,9 @@ export async function crearComentario(
 		capturaUrl = await subirCaptura(capturaFile);
 	}
 
-	const now = new Date().toISOString();
 	const comentarioData: Record<string, unknown> = {
 		ticket_id: ticketId,
-		contenido,
-		created_at: now
+		contenido
 	};
 
 	// Solo agregar captura_url si existe
@@ -285,12 +271,18 @@ export async function crearComentario(
 		comentarioData.captura_url = capturaUrl;
 	}
 
-	const docRef = await addDoc(comentariosCollection, comentarioData);
+	const { data, error } = await supabase
+		.from('comentarios')
+		.insert(comentarioData)
+		.select()
+		.single();
 
-	return {
-		id: docRef.id,
-		...comentarioData
-	} as Comentario;
+	if (error) {
+		console.error('Error creando comentario:', error);
+		throw error;
+	}
+
+	return data as Comentario;
 }
 
 // ============================================
@@ -298,7 +290,7 @@ export async function crearComentario(
 // ============================================
 
 /**
- * Subir una captura de pantalla a Firebase Storage
+ * Subir una captura de pantalla a Supabase Storage
  * Retorna la URL pública del archivo
  */
 export async function subirCaptura(file: File): Promise<string> {
@@ -306,15 +298,24 @@ export async function subirCaptura(file: File): Promise<string> {
 	const timestamp = Date.now();
 	const randomString = Math.random().toString(36).substring(7);
 	const extension = file.name.split('.').pop();
-	const fileName = `capturas/${timestamp}-${randomString}.${extension}`;
+	const fileName = `${timestamp}-${randomString}.${extension}`;
 
-	// Subir a Firebase Storage
-	const storageRef = ref(storage, fileName);
-	await uploadBytes(storageRef, file);
+	// Subir a Supabase Storage
+	const { error: uploadError } = await supabase.storage
+		.from('capturas')
+		.upload(fileName, file);
+
+	if (uploadError) {
+		console.error('Error subiendo archivo:', uploadError);
+		throw uploadError;
+	}
 
 	// Obtener la URL pública
-	const downloadURL = await getDownloadURL(storageRef);
-	return downloadURL;
+	const { data } = supabase.storage
+		.from('capturas')
+		.getPublicUrl(fileName);
+
+	return data.publicUrl;
 }
 
 /**
