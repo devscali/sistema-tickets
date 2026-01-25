@@ -102,7 +102,8 @@ export async function crearTicket(
 	descripcion: string,
 	nombrePaciente: string,
 	categoria: Categoria,
-	capturaFile?: File
+	capturaFile?: File,
+	email?: string
 ): Promise<Ticket> {
 	try {
 		// 1. Subir la captura a Supabase Storage (si existe)
@@ -131,6 +132,11 @@ export async function crearTicket(
 		// Solo agregar captura_url si existe
 		if (capturaUrl) {
 			ticketData.captura_url = capturaUrl;
+		}
+
+		// Solo agregar email si existe
+		if (email) {
+			ticketData.email = email;
 		}
 
 		console.log('Guardando ticket en Supabase...', ticketData);

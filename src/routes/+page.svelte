@@ -6,6 +6,7 @@
 	let titulo = '';
 	let descripcion = '';
 	let nombrePaciente = '';
+	let email = '';
 	let categoria: Categoria = 'WhatsApp';
 	let capturaFile: File | null = null;
 	let capturaPreview: string | null = null;
@@ -60,11 +61,16 @@
 			return;
 		}
 
+		if (!email || !email.includes('@')) {
+			error = 'Ingresa un correo electrónico válido';
+			return;
+		}
+
 		try {
 			cargando = true;
 
-			// Crear ticket (captura es opcional)
-			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile || undefined);
+			// Crear ticket (captura es opcional, email es obligatorio)
+			const nuevoTicket = await crearTicket(titulo, descripcion, nombrePaciente, categoria, capturaFile || undefined, email);
 
 			// Redirigir a la página de agradecimiento
 			goto(`/gracias?ticket=${nuevoTicket.numero}`);
@@ -112,6 +118,21 @@
 						minlength="2"
 					/>
 					<span class="char-count">{nombrePaciente.length}/2</span>
+				</div>
+
+				<!-- Email para notificación -->
+				<div class="form-group">
+					<label for="email">
+						Correo Electrónico <span class="required">*</span>
+						<span class="hint">(para notificarte cuando se resuelva)</span>
+					</label>
+					<input
+						id="email"
+						type="email"
+						bind:value={email}
+						placeholder="Ej: paciente@email.com"
+						required
+					/>
 				</div>
 
 				<!-- Categoría -->

@@ -19,6 +19,7 @@ export interface Ticket {
 	categoria: Categoria;
 	estado: Estado;
 	captura_url: string;
+	email?: string; // Email para notificación de resolución
 	created_at: string;
 	updated_at: string;
 }

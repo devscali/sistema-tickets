@@ -1,0 +1,37 @@
+name: Respaldo diario de datos
+
+on:
+  schedule:
+    # Todos los días a las 6:00 AM UTC (12:00 AM hora México)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permite ejecutar manualmente
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install @supabase/supabase-js
+
+      - name: Ejecutar respaldo
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: node scripts/backup.js
+
+      - name: Commit y push del respaldo
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add backups/
+          git diff --staged --quiet || git commit -m "Respaldo automático $(date +'%Y-%m-%d')"
+          git push

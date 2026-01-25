@@ -149,6 +149,25 @@
 		try {
 			cambiandoEstado = true;
 			await actualizarEstadoTicket(ticket.id, nuevoEstado);
+
+			// Enviar notificación por email si se resuelve y tiene email
+			if (nuevoEstado === 'Resuelto' && ticket.email) {
+				try {
+					await fetch('/api/enviar-notificacion', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							email: ticket.email,
+							numeroTicket: ticket.numero,
+							titulo: ticket.titulo,
+							nombrePaciente: ticket.nombre_paciente
+						})
+					});
+				} catch (emailErr) {
+					console.error('Error enviando notificación:', emailErr);
+				}
+			}
+
 			ticket.estado = nuevoEstado;
 			ticket = ticket;
 		} catch (err) {
