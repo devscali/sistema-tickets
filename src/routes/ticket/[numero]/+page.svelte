@@ -418,12 +418,25 @@
 					</div>
 
 					<div class="estado-change">
-						<label>Cambiar estado:</label>
-						<select bind:value={ticket.estado} on:change={(e) => cambiarEstado(e.currentTarget.value as Estado)} disabled={cambiandoEstado}>
+						<span class="estado-label">Estado:</span>
+						<div class="estado-buttons">
 							{#each ESTADOS as estado}
-								<option value={estado}>{estado}</option>
+								<button
+									class="estado-btn"
+									class:active={ticket.estado === estado}
+									style="--estado-color: {getEstadoColor(estado)}"
+									on:click={() => cambiarEstado(estado)}
+									disabled={cambiandoEstado || ticket.estado === estado}
+								>
+									{#if ticket.estado === estado}
+										<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+											<polyline points="20 6 9 17 4 12"/>
+										</svg>
+									{/if}
+									{estado}
+								</button>
 							{/each}
-						</select>
+						</div>
 					</div>
 
 					<div class="ticket-desc">
@@ -675,10 +688,11 @@
 
 	/* Ticket info */
 	.ticket-info {
-		background: rgba(255,255,255,0.95);
-		border-radius: 16px;
-		padding: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+		background: rgba(255,255,255,0.98);
+		border-radius: 20px;
+		padding: 2rem;
+		box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+		border: 1px solid rgba(255,255,255,0.8);
 	}
 
 	.ticket-top {
@@ -690,10 +704,12 @@
 	}
 
 	.ticket-top h1 {
-		font-size: 1.5rem;
-		color: #2c3e50;
+		font-size: 1.4rem;
+		color: #1a1a2e;
 		margin: 0;
 		flex: 1;
+		font-weight: 700;
+		line-height: 1.3;
 	}
 
 	.ticket-actions {
@@ -741,32 +757,37 @@
 	.ticket-badges {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
+		gap: 0.6rem;
+		margin-bottom: 1.25rem;
 	}
 
 	.badge {
-		padding: 0.4rem 0.8rem;
-		border-radius: 20px;
-		font-size: 0.85rem;
-		font-weight: 600;
+		padding: 0.5rem 1rem;
+		border-radius: 25px;
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.3px;
 	}
 
 	.badge.estado {
 		color: white;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 	}
 
 	.badge.categoria {
-		background: #e8f4fd;
+		background: linear-gradient(135deg, #e8f4fd 0%, #d4e9fc 100%);
 		color: #2980b9;
+		border: 1px solid #bee5eb;
 	}
 
 	.badge.paciente {
 		display: flex;
 		align-items: center;
-		gap: 0.3rem;
-		background: #f5eef8;
+		gap: 0.4rem;
+		background: linear-gradient(135deg, #f5eef8 0%, #ebe0f0 100%);
 		color: #8e44ad;
+		border: 1px solid #d4b8e0;
 	}
 
 	.badge-icon {
@@ -775,40 +796,86 @@
 	}
 
 	.estado-change {
+		margin-bottom: 1.5rem;
+		padding: 1rem;
+		background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+		border-radius: 12px;
+		border: 1px solid #dee2e6;
+	}
+
+	.estado-label {
+		display: block;
+		font-weight: 700;
+		color: #495057;
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		margin-bottom: 0.75rem;
+	}
+
+	.estado-buttons {
 		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.estado-btn {
+		display: inline-flex;
 		align-items: center;
-		gap: 0.75rem;
-		margin-bottom: 1rem;
-		padding: 0.75rem;
-		background: #f8f9fa;
-		border-radius: 8px;
-	}
-
-	.estado-change label {
-		font-weight: 600;
-		color: #5d6d7e;
-		font-size: 0.9rem;
-	}
-
-	.estado-change select {
-		padding: 0.5rem 1rem;
-		border: 2px solid #ddd;
-		border-radius: 6px;
-		font-weight: 600;
+		gap: 0.4rem;
+		padding: 0.6rem 1rem;
+		border: 2px solid var(--estado-color);
+		border-radius: 25px;
 		background: white;
+		color: var(--estado-color);
+		font-weight: 600;
+		font-size: 0.85rem;
 		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.estado-btn:hover:not(:disabled) {
+		background: var(--estado-color);
+		color: white;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	}
+
+	.estado-btn.active {
+		background: var(--estado-color);
+		color: white;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+	}
+
+	.estado-btn:disabled {
+		cursor: default;
+	}
+
+	.estado-btn .check-icon {
+		width: 14px;
+		height: 14px;
 	}
 
 	.ticket-desc {
-		color: #34495e;
-		line-height: 1.6;
-		margin-bottom: 1rem;
+		color: #4a5568;
+		line-height: 1.7;
+		margin-bottom: 1.5rem;
+		padding: 1rem;
+		background: #f7fafc;
+		border-radius: 10px;
+		border-left: 4px solid #667eea;
+		font-size: 0.95rem;
+	}
+
+	.ticket-desc p {
+		margin: 0;
 	}
 
 	.ticket-image {
-		border-radius: 8px;
+		border-radius: 12px;
 		overflow: hidden;
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 	}
 
 	.ticket-image img {
@@ -817,8 +884,13 @@
 	}
 
 	.ticket-date {
-		font-size: 0.85rem;
-		color: #95a5a6;
+		font-size: 0.8rem;
+		color: #718096;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding-top: 1rem;
+		border-top: 1px solid #e2e8f0;
 	}
 
 	/* Edit mode */
@@ -867,26 +939,29 @@
 
 	/* Comments */
 	.comments-section {
-		background: rgba(255,255,255,0.95);
-		border-radius: 16px;
-		padding: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+		background: rgba(255,255,255,0.98);
+		border-radius: 20px;
+		padding: 2rem;
+		box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+		border: 1px solid rgba(255,255,255,0.8);
 	}
 
 	.comments-section h2 {
-		margin: 0 0 1rem 0;
-		color: #2c3e50;
+		margin: 0 0 1.25rem 0;
+		color: #1a1a2e;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.6rem;
+		font-size: 1.2rem;
 	}
 
 	.count {
-		background: #3498db;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		color: white;
-		padding: 0.2rem 0.6rem;
-		border-radius: 12px;
-		font-size: 0.85rem;
+		padding: 0.25rem 0.75rem;
+		border-radius: 15px;
+		font-size: 0.8rem;
+		font-weight: 700;
 	}
 
 	.comments-list {
@@ -894,11 +969,17 @@
 	}
 
 	.comment {
-		background: #f8f9fa;
-		border-radius: 12px;
-		padding: 1rem;
-		margin-bottom: 0.75rem;
-		border-left: 4px solid #3498db;
+		background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+		border-radius: 14px;
+		padding: 1.25rem;
+		margin-bottom: 1rem;
+		border-left: 4px solid #667eea;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.comment:hover {
+		transform: translateX(4px);
+		box-shadow: 0 4px 15px rgba(0,0,0,0.08);
 	}
 
 	.comment-header {
