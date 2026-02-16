@@ -1,0 +1,23 @@
+[
+  {
+    "id": "a8ea1e7e-8059-4f9c-ad62-c00e2b32b775",
+    "ticket_id": "3c248bd9-56a0-4ee4-9b7e-82f5de2f29ba",
+    "contenido": "**sara:** Se reviso el prefil y los documentos si aparecen en la seccion de documentos y en el apartado de imagenes, al igual el mensaje de bienvenida no se envio porque no se selecciono cuando agregaron el apartado de tipo de deposito si tenia fecha de cirugia seleccionada o no y se pauso el flujo, ya se ejecuto nuevamente el flujo para el contacto y se envio el aviso de bienvenida ",
+    "captura_url": "https://olzxjcqnluuznwsbbici.supabase.co/storage/v1/object/public/capturas/1769385397003-ejc97p.jfif",
+    "created_at": "2026-01-25T23:56:38.127748+00:00"
+  },
+  {
+    "id": "898be33b-82ac-4331-94d1-7f01bafd9d8a",
+    "ticket_id": "6389b2b1-1791-4354-b83f-e1bd988ce2f9",
+    "contenido": "**sara:** Los documentos aparecen correctamente en la seccion de documentos",
+    "captura_url": "https://olzxjcqnluuznwsbbici.supabase.co/storage/v1/object/public/capturas/1769384767641-aidvfb.jfif",
+    "created_at": "2026-01-25T23:46:08.791591+00:00"
+  },
+  {
+    "id": "259247c8-2703-4670-afc6-6aedea3e6e86",
+    "ticket_id": "07fd262e-2fa8-4917-9c3b-1a97f95477f5",
+    "contenido": "**sara:** Se verifico la informacion del usuario y se hizo una prueba, el flujo si esta funcionando bien al hacer la prueba, el problema solo pasa con el contacto, verificar si el numero de telefono si es valido para whatsapp ",
+    "captura_url": null,
+    "created_at": "2026-01-25T23:43:33.429174+00:00"
+  }
+]
